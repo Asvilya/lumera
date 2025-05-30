@@ -127,3 +127,4 @@ For additional support, join the [Lumera Discord](https://discord.gg/qr9S5dHN)
 ## Disclaimer
 
 This script is provided for testnet purposes only. Always verify commands before executing them on your system.
+Thank:WINGFO-HQ
