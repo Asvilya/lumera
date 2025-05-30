@@ -57,12 +57,12 @@ install_node() {
   source $HOME/.bash_profile
 
   print_yellow "Downloading and installing Lumera binary..."
-  cd $HOME
-  curl -LO https://github.com/LumeraProtocol/lumera/releases/download/v1.0.1/lumera_v1.0.1_linux_amd64.tar.gz
-  rm lumera_v1.0.1_linux_amd64.tar.gz
-  [ -f install.sh ] && rm install.sh
-  sudo mv libwasmvm.x86_64.so /usr/lib/
-  chmod +x lumerad
+cd $HOME
+curl -LO https://github.com/LumeraProtocol/lumera/releases/download/v1.0.1/lumera_v1.0.1_linux_amd64.tar.gz
+tar -xvf lumera_v1.0.1_linux_amd64.tar.gz
+rm lumera_v1.0.1_linux_amd64.tar.gz
+rm install.sh
+chmod +x lumerad
   sudo mv lumerad $HOME/go/bin/
 
   print_yellow "Verifying installation..."
