@@ -7,8 +7,7 @@ This guide provides step-by-step instructions to set up a Lumera node and valida
 - Ubuntu 22.04 LTS or higher
 - 8 cores, x86_64 architecture
 - 32GB RAM
-- 2 TB NVMe SSD
-- Root access to the server
+- 1 TB NVMe SSD
 
 ## Quick Installation
 
