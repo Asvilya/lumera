@@ -71,10 +71,10 @@ lumerad version
   lumerad version
 
   print_yellow "Configuring Lumera node..."
-  lumerad config node tcp://localhost:${LUMERA_PORT}657
-  lumerad config keyring-backend os
-  lumerad config chain-id lumera-testnet-1
-  lumerad init "$MONIKER" --chain-id lumera-testnet-1
+lumerad config set client chain-id lumera-testnet-1
+lumerad config set client keyring-backend test
+lumerad config set client node tcp://localhost:${LUMERA_PORT}657
+lumerad init "$MONIKER" --chain-id lumera-testnet-1
 
   print_yellow "Downloading genesis and address book..."
 curl -L https://raw.githubusercontent.com/Core-Node-Team/Lumera/refs/heads/main/addrbook.json > $HOME/.lumera/config/addrbook.json
@@ -118,8 +118,16 @@ LimitNOFILE=65535
 WantedBy=multi-user.target
 EOF
 
-  print_yellow "Downloading snapshot (this may take some time)..."
-  curl "https://snapshot.nodevism.com/testnet/lumera/lumera-snapshot.tar.lz4" | lz4 -dc - | tar -xf - -C "$HOME/.lumera"
+print_yellow "Downloading snapshot (this may take some time)..."
+sudo systemctl stop lumerad
+cp $HOME/.lumera/data/priv_validator_state.json $HOME/.lumera/priv_validator_state.json.backup
+rm -rf $HOME/.lumera/data
+rm -rf $HOME/.lumera/wasm
+lumerad tendermint unsafe-reset-all --home ~/.lumera/ --keep-addr-book
+
+SNAP_NAME=$(curl -s https://ss-t.lumera.nodestake.org/ | egrep -o ">20.*\.tar.lz4" | tr -d ">")
+curl -o - -L https://ss-t.lumera.nodestake.org/${SNAP_NAME}  | lz4 -c -d - | tar -x -C $HOME/.lumera
+mv $HOME/.lumera/priv_validator_state.json.backup $HOME/.lumera/data/priv_validator_state.json
 
   print_yellow "Enabling and starting Lumera service..."
   sudo systemctl daemon-reload
