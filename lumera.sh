@@ -58,12 +58,14 @@ install_node() {
 
   print_yellow "Downloading and installing Lumera binary..."
 cd $HOME
-curl -LO https://github.com/LumeraProtocol/lumera/releases/download/v1.0.1/lumera_v1.0.1_linux_amd64.tar.gz
+wget https://github.com/LumeraProtocol/lumera/releases/download/v1.0.1/lumera_v1.0.1_linux_amd64.tar.gz
 tar -xvf lumera_v1.0.1_linux_amd64.tar.gz
 rm lumera_v1.0.1_linux_amd64.tar.gz
 rm install.sh
+mv libwasmvm.x86_64.so /usr/lib/
 chmod +x lumerad
-  sudo mv lumerad $HOME/go/bin/
+mv lumerad $HOME/go/bin/
+lumerad version
 
   print_yellow "Verifying installation..."
   lumerad version
@@ -75,19 +77,12 @@ chmod +x lumerad
   lumerad init "$MONIKER" --chain-id lumera-testnet-1
 
   print_yellow "Downloading genesis and address book..."
-  curl -Ls https://ss-t.lumera.nodestake.org/genesis.json > $HOME/.lumera/config/genesis.json 
-  curl -Ls https://ss-t.lumera.nodestake.org/addrbook.json > $HOME/.lumera/config/addrbook.json 
+curl -L https://raw.githubusercontent.com/Core-Node-Team/Lumera/refs/heads/main/addrbook.json > $HOME/.lumera/config/addrbook.json
+curl -L https://raw.githubusercontent.com/Core-Node-Team/Lumera/refs/heads/main/genesis.json > $HOME/.lumera/config/genesis.json
 
   print_yellow "Setting up seeds and peers..."
-  seed="327fb4151de9f78f29ff10714085e347a4e3c836@rpc-t.lumera.nodestake.org:666"
-  sed -i.bak -e "s|^seeds *=.*|seeds = \"$seed\"|" $HOME/.lumera/config/config.toml
-
-  peers=$(curl -s https://ss-t.lumera.nodestake.org/peers.txt)
-  if [ -n "$peers" ]; then
-    sed -i.bak -e "s|^persistent_peers *=.*|persistent_peers = \"$peers\"|" ~/.lumera/config/config.toml
-  else
-    echo "Failed to get the list of peers, persistent_peers is not modified."
-  fi
+  peers="$(curl -sS https://lumera-testnet-rpc.rpcdot.com:443/net_info | jq -r '.result.peers[] | "\(.node_info.id)@\(.remote_ip):\(.node_info.listen_addr)"' | awk -F ':' '{print $1":"$(NF)}' | sed -z 's|\n|,|g;s|.$||')"
+sed -i.bak -e "s/^persistent_peers *=.*/persistent_peers = \"$peers\"/" $HOME/.lumera/config/config.toml
 
   print_yellow "Configuring custom ports..."
   sed -i.bak -e "s%:26658%:${LUMERA_PORT}658%g; \
