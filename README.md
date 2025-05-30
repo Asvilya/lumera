@@ -15,7 +15,7 @@ This guide provides step-by-step instructions to set up a Lumera node and valida
 For a quick setup, run the following commands:
 
 ```bash
-wget https://raw.githubusercontent.com/Asvilya/lumera/refs/heads/main/lumera.sh && chmod +x lumera.sh && lumera.sh
+wget https://raw.githubusercontent.com/Asvilya/lumera/main/lumera.sh && chmod +x lumera.sh && ./lumera.sh
 ```
 
 ## Features
